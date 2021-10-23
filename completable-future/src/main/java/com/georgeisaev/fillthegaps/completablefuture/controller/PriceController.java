@@ -1,6 +1,6 @@
 package com.georgeisaev.fillthegaps.completablefuture.controller;
 
-import com.georgeisaev.fillthegaps.completablefuture.service.PriceAggregator;
+import com.georgeisaev.fillthegaps.completablefuture.service.PriceAggregatorService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,13 +20,13 @@ public class PriceController {
 
     protected static final String BASE_ENDPOINT = "/api/v1";
 
-    PriceAggregator priceAggregator;
+    PriceAggregatorService priceAggregatorService;
 
     @GetMapping("/items/{itemId}/prices/lowest")
     public ResponseEntity<Double> findLowestPrice(
             @PathVariable Long itemId) {
         log.info("GET: {}/items/{}/prices/lowest", BASE_ENDPOINT, itemId);
-        return ResponseEntity.ok(priceAggregator.findMinPrice(itemId));
+        return ResponseEntity.ok(priceAggregatorService.findMinPrice(itemId));
     }
 
 }

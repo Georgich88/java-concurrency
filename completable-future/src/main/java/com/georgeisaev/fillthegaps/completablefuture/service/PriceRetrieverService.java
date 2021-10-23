@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 @Slf4j
 @Service
-public class PriceRetriever {
+public class PriceRetrieverService {
 
     /**
      * Max timeout to wait an item price from a specific shop

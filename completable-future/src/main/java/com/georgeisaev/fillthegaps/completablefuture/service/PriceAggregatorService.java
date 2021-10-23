@@ -24,7 +24,7 @@ import java.util.stream.LongStream;
 @Slf4j
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Service
-public class PriceAggregator {
+public class PriceAggregatorService {
 
     /**
      * Number of available shops
@@ -39,17 +39,16 @@ public class PriceAggregator {
     /**
      * Shop price retriever
      */
-    PriceRetriever priceRetriever;
+    PriceRetrieverService priceRetrieverService;
 
     /**
      * Available shops to retrieve a price
      */
     Set<Long> shopIds;
 
-    public PriceAggregator(PriceRetriever priceRetriever) {
-        this.priceRetriever = priceRetriever;
-        shopIds = LongStream.generate(() -> ThreadLocalRandom.current().nextLong())
-                .limit(SHOP_COUNT)
+    public PriceAggregatorService(PriceRetrieverService priceRetrieverService) {
+        this.priceRetrieverService = priceRetrieverService;
+        shopIds = LongStream.rangeClosed(1, SHOP_COUNT)
                 .boxed()
                 .collect(Collectors.toSet());
     }
@@ -64,7 +63,7 @@ public class PriceAggregator {
         log.debug("Retrieve a price for itemId={}", itemId);
         @SuppressWarnings("unchecked")
         CompletableFuture<Double>[] tasks = shopIds.stream()
-                .map(id -> CompletableFuture.supplyAsync(() -> priceRetriever.findPrice(itemId, id))
+                .map(id -> CompletableFuture.supplyAsync(() -> priceRetrieverService.findPrice(itemId, id))
                         .completeOnTimeout(null, ACCEPTED_TIMEOUT, TimeUnit.MILLISECONDS))
                 .toArray(CompletableFuture[]::new);
         // Combining tasks and retrieve a min price
