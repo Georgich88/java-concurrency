@@ -7,11 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -64,17 +61,17 @@ public class PriceAggregatorService {
         @SuppressWarnings("unchecked")
         CompletableFuture<Double>[] tasks = shopIds.stream()
                 .map(id -> CompletableFuture.supplyAsync(() -> priceRetrieverService.findPrice(itemId, id))
-                        .completeOnTimeout(null, ACCEPTED_TIMEOUT, TimeUnit.MILLISECONDS))
+                        .completeOnTimeout(Double.NaN, ACCEPTED_TIMEOUT, TimeUnit.MILLISECONDS))
                 .toArray(CompletableFuture[]::new);
         // Combining tasks and retrieve a min price
         CompletableFuture<Void> shopPriceRetrievalTasks = CompletableFuture.allOf(tasks);
-        OptionalDouble price = shopPriceRetrievalTasks.thenApply(unused -> Arrays.stream(tasks)
-                        .map(CompletableFuture::join)
-                        .filter(Objects::nonNull)
-                        .mapToDouble(Double::doubleValue)
-                        .min())
+        return shopPriceRetrievalTasks.thenApply(unused -> Arrays.stream(tasks)
+                        .mapToDouble(CompletableFuture::join)
+                        .filter(p -> !Double.isNaN(p))
+                        .min()
+                        .orElseThrow(PriceNotFoundException.supplierForItemId(itemId))
+                )
                 .join();
-        return price.orElseThrow(PriceNotFoundException.supplierForItemId(itemId));
     }
 
 }
