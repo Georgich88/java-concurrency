@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Import(TestConfig.class)
+@Import(PriceControllerTestConfig.class)
 @WebMvcTest(PriceController.class)
 class PriceControllerTest {
 
@@ -45,7 +45,7 @@ class PriceControllerTest {
 
 @Configuration
 @Import(PriceAggregatorService.class)
-class TestConfig {
+class PriceControllerTestConfig {
 
     @Bean
     @Primary
