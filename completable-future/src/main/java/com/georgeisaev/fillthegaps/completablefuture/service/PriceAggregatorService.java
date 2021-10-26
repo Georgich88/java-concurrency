@@ -1,6 +1,7 @@
 package com.georgeisaev.fillthegaps.completablefuture.service;
 
 import com.georgeisaev.fillthegaps.completablefuture.exception.PriceNotFoundException;
+import com.georgeisaev.fillthegaps.completablefuture.utils.PriceUtils;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class PriceAggregatorService {
     /**
      * Max timeout to wait an item price from shops
      */
-    private static final int ACCEPTED_TIMEOUT = 3_000;
+    private static final int ACCEPTED_TIMEOUT = 2_900;
 
     /**
      * Shop price retriever
@@ -67,7 +68,7 @@ public class PriceAggregatorService {
         CompletableFuture<Void> shopPriceRetrievalTasks = CompletableFuture.allOf(tasks);
         return shopPriceRetrievalTasks.thenApply(unused -> Arrays.stream(tasks)
                         .mapToDouble(CompletableFuture::join)
-                        .filter(p -> !Double.isNaN(p))
+                        .filter(PriceUtils::isNumber)
                         .min()
                         .orElseThrow(PriceNotFoundException.supplierForItemId(itemId))
                 )
