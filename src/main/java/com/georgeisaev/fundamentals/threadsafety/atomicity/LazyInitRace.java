@@ -1,6 +1,5 @@
 package com.georgeisaev.fundamentals.threadsafety.atomicity;
 
-import com.georgeisaev.annotation.NotThreadSafe;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import java.util.stream.IntStream;
  * Illustrates race conditions in lazy initialization
  */
 @Slf4j
-@NotThreadSafe
 public class LazyInitRace {
 
     public static final int THREADS = 10;

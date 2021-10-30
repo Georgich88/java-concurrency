@@ -1,14 +1,10 @@
 package com.georgeisaev.fundamentals.threadsafety.atomicity;
 
-import jakarta.servlet.GenericServlet;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import net.jcip.annotations.NotThreadSafe;
 
-import java.math.BigInteger;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.IntStream;
 
 /**
@@ -17,13 +13,12 @@ import java.util.stream.IntStream;
  * Lost update, because incrementing {@code count++} is not atomic.
  */
 @Slf4j
-@NotThreadSafe
-public class UnsafeCountingFactorizer extends GenericServlet implements FactorizerServlet {
+public class CountingFactorizer {
 
-    private long count;
+    private final AtomicLong count = new AtomicLong(0);
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        UnsafeCountingFactorizer factorizer = new UnsafeCountingFactorizer();
+        CountingFactorizer factorizer = new CountingFactorizer();
         @SuppressWarnings("unchecked")
         CompletableFuture<Void>[] tasks = IntStream.range(0, 100)
                 .mapToObj(id -> CompletableFuture.runAsync(factorizer::service))
@@ -33,25 +28,14 @@ public class UnsafeCountingFactorizer extends GenericServlet implements Factoriz
         log.info("Count: {}", factorizer.getCount());
     }
 
-    @Override
     public void service() {
-        service(null, null);
+        count.incrementAndGet();
     }
-
-    @Override
-    public void service(ServletRequest request, ServletResponse response) {
-        BigInteger i = extractFromRequest(request);
-        BigInteger[] factors = factor(i);
-        ++count;
-        encodeIntoResponse(response, factors);
-    }
-
 
     // Getters
 
     public long getCount() {
-        return count;
+        return count.get();
     }
-
 
 }
