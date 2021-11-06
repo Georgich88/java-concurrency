@@ -14,8 +14,8 @@ public class Test {
     private final AtomicStampedReference<ComplexObject> stampedState;
     private final AtomicInteger stamp;
 
-    public Test(ComplexObject state) {
-        this.stampedState = new AtomicStampedReference<>(state, 0);
+    public Test(ComplexObject initialState) {
+        this.stampedState = new AtomicStampedReference<>(initialState, 0);
         this.stamp = new AtomicInteger(0);
     }
 
