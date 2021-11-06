@@ -4,6 +4,11 @@ import java.util.ConcurrentModificationException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicStampedReference;
 
+/**
+ * Illustrated optimistic blocking machinery via Atomic classes functionality
+ *
+ * @author Georgy Isaev
+ */
 public class Test {
 
     private final AtomicStampedReference<ComplexObject> stampedState;
@@ -16,16 +21,16 @@ public class Test {
 
     public void updateState(ComplexObject newState) {
         int[] stampHolder = new int[1];
-        ComplexObject currentState = this.stampedState.get(stampHolder);
+        ComplexObject currentState = stampedState.get(stampHolder);
         int newStamp = this.stamp.incrementAndGet();
         // Optimistically sets newState only if the current state and stamp has not been changed
-        if (!this.stampedState.compareAndSet(currentState, newState, stampHolder[0], newStamp)) {
+        if (!stampedState.compareAndSet(currentState, newState, stampHolder[0], newStamp)) {
             throw new ConcurrentModificationException("Cannot update state since it has been modified");
         }
     }
 
     public String getVersion() {
-        return String.valueOf(this.stampedState.getStamp());
+        return String.valueOf(stampedState.getStamp());
     }
 
     static class ComplexObject {
