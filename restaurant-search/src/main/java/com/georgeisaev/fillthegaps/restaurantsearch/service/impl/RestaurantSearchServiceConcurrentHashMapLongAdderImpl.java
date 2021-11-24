@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
 import static org.slf4j.helpers.MessageFormatter.format;
@@ -19,7 +20,7 @@ import static org.slf4j.helpers.MessageFormatter.format;
  */
 @Slf4j
 @Service
-public class RestaurantSearchServiceConcurrentHashMapImpl implements RestaurantSearchService {
+public class RestaurantSearchServiceConcurrentHashMapLongAdderImpl implements RestaurantSearchService {
 
     /**
      * Stat info template
@@ -29,9 +30,9 @@ public class RestaurantSearchServiceConcurrentHashMapImpl implements RestaurantS
     /**
      * Contains restaurant stats grouped by restaurant name
      */
-    private final Map<String, Long> stat;
+    private final Map<String, LongAdder> stat;
 
-    public RestaurantSearchServiceConcurrentHashMapImpl() {
+    public RestaurantSearchServiceConcurrentHashMapLongAdderImpl() {
         this.stat = new ConcurrentHashMap<>();
     }
 
@@ -56,7 +57,8 @@ public class RestaurantSearchServiceConcurrentHashMapImpl implements RestaurantS
      */
     @Override
     public void addToStat(String restaurantName) {
-        stat.merge(restaurantName, 0L, Long::sum);
+        stat.computeIfAbsent(restaurantName, s -> new LongAdder());
+        stat.get(restaurantName).increment();
     }
 
     /**
