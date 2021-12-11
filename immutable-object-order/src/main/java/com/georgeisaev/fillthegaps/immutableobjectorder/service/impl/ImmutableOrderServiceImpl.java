@@ -42,7 +42,7 @@ public class ImmutableOrderServiceImpl implements OrderService {
     }
 
     @Override
-    public synchronized void updatePaymentInfo(long cartId, PaymentInfo paymentInfo) {
+    public void updatePaymentInfo(long cartId, PaymentInfo paymentInfo) {
         currentOrders.computeIfPresent(cartId, (id, order) -> {
             Order changedPaymentOrder = ImmutableOrder.changePaymentInfo(order, paymentInfo);
             if (changedPaymentOrder.checkStatus()) {
@@ -54,7 +54,7 @@ public class ImmutableOrderServiceImpl implements OrderService {
     }
 
     @Override
-    public synchronized void setPacked(long cartId) {
+    public void setPacked(long cartId) {
         currentOrders.computeIfPresent(cartId, (id, order) -> {
             Order packedOrder = ImmutableOrder.changePacked(order, true);
             if (packedOrder.checkStatus()) {
