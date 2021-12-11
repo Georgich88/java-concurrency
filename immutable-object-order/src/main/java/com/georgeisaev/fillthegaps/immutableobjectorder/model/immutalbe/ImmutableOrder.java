@@ -1,5 +1,6 @@
 package com.georgeisaev.fillthegaps.immutableobjectorder.model.immutalbe;
 
+import com.georgeisaev.fillthegaps.immutableobjectorder.model.annotation.Immutable;
 import com.georgeisaev.fillthegaps.immutableobjectorder.model.Item;
 import com.georgeisaev.fillthegaps.immutableobjectorder.model.Order;
 import com.georgeisaev.fillthegaps.immutableobjectorder.model.PaymentInfo;
@@ -12,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@Immutable
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ImmutableOrder implements Order {

@@ -1,5 +1,6 @@
 package com.georgeisaev.fillthegaps.immutableobjectorder.model.mutable;
 
+import com.georgeisaev.fillthegaps.immutableobjectorder.model.annotation.Mutable;
 import com.georgeisaev.fillthegaps.immutableobjectorder.model.Item;
 import com.georgeisaev.fillthegaps.immutableobjectorder.model.Order;
 import com.georgeisaev.fillthegaps.immutableobjectorder.model.PaymentInfo;
@@ -10,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
+@Mutable
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MutableOrder implements Order {
