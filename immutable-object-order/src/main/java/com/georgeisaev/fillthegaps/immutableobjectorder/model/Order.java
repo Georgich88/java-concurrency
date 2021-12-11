@@ -1,31 +1,19 @@
 package com.georgeisaev.fillthegaps.immutableobjectorder.model;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.experimental.FieldDefaults;
-
 import java.util.List;
 
-@Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class Order {
+public interface Order {
 
-    Long id;
-    List<Item> items;
-    PaymentInfo paymentInfo;
-    boolean isPacked;
-    Status status;
+    boolean checkStatus();
 
-    public Order(List<Item> items) {
-        this.items = items;
-    }
+    Long getId();
 
-    public synchronized boolean checkStatus() {
-        if (items != null && !items.isEmpty() && paymentInfo != null && isPacked) {
-            status = Status.DELIVERED;
-            return true;
-        }
-        return false;
-    }
+    List<Item> getItems();
+
+    PaymentInfo getPaymentInfo();
+
+    boolean isPacked();
+
+    Status getStatus();
 
 }
